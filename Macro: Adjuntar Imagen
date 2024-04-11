@@ -1,1 +1,42 @@
+Sub AjustarEEnumerarImagenes()
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim shp As Shape
+    Dim cell As Range
+    Dim i As Integer
+    Dim txtBox As Shape
+    
+    ' Establecer la hoja de trabajo y el rango
+    Set ws = ThisWorkbook.Sheets("Tipo")
+    Set rng = ws.Range("A4:D8") ' Cambia el rango según tus necesidades
+    
+    i = 1 ' Inicializar contador de imagen
+    
+    ' Iterar sobre cada celda en el rango
+    For Each cell In rng
+        ' Buscar la imagen en la celda actual
+        For Each shp In ws.Shapes
+            If Not Intersect(shp.TopLeftCell, cell) Is Nothing Then
+                ' Ajustar la imagen al tamaño de la celda
+                shp.LockAspectRatio = msoFalse
+                shp.Top = cell.Top
+                shp.Left = cell.Left
+                shp.Width = cell.Width
+                shp.Height = cell.Height
+                ' Colocar la imagen por delante de otras
+                shp.ZOrder msoBringToFront
+                ' Agregar número de enumeración
+                Set txtBox = ws.Shapes.AddTextbox(msoTextOrientationHorizontal, shp.Left, shp.Top, shp.Width * 0.2, shp.Height * 0.2)
+                txtBox.TextFrame.Characters.Text = CStr(i)
+                txtBox.Fill.ForeColor.RGB = RGB(255, 255, 255) ' Color de fondo blanco
+                txtBox.Line.Visible = msoFalse ' Ocultar borde
+                txtBox.TextFrame.Characters.Font.Size = 8 ' Tamaño de la fuente
+                txtBox.TextFrame.HorizontalAlignment = xlHAlignLeft ' Alinear texto a la izquierda
+                txtBox.TextFrame.VerticalAlignment = xlVAlignTop ' Alinear texto arriba
+                i = i + 1 ' Incrementar contador de imagen
+                Exit For ' Salir del bucle interior para evitar múltiples números en la misma celda
+            End If
+        Next shp
+    Next cell
+End Sub
 
